@@ -37,17 +37,27 @@
                 android:id="@+id/add_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:layout_toStartOf="@id/faq"
                 android:adjustViewBounds="true"
                 android:background="@drawable/buttonback"
                 android:contentDescription="@string/add_image"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
                 android:src="@drawable/add_image" />
 
             <ImageButton
                 android:id="@+id/faq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/buttonback"
                 android:layout_marginEnd="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
                 android:layout_toStartOf="@id/contact"
                 android:contentDescription="@string/faq_message"
                 android:src="@drawable/faq" />
@@ -56,8 +66,13 @@
                 android:id="@+id/contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/buttonback"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
                 android:contentDescription="@string/contact_message"
                 android:src="@drawable/contact" />
         </RelativeLayout>
