@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Upload" />
+        <activity android:name=".Gallery" />
+        <activity android:name=".Menu" />
+        <activity android:name=".Image" />
+        <activity android:name=".Faq" />
+        <activity android:name=".Statistique" />
+        <activity android:name=".Contact" />
+        <activity android:name=".Setting"></activity>
     </application>
 
 </manifest>
