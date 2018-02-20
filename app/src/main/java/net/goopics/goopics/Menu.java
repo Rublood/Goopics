@@ -3,26 +3,45 @@ package net.goopics.goopics;
 import android.app.ListActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class Menu extends ListActivity {
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private static String TAG = MainActivity.class.getSimpleName();
 
-        String[] values = new String[] { "Device",
-                "Géo localisation", "Accéléromètre",
-                "Navigateur internet", "Dialogues", "Album photos",
-                "Connexion réseau", "Gestion des fichiers",
-                "Carnet de contacts" };
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.rowlayout, values);
-        setListAdapter(adapter);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(TAG, "onStart()");
     }
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Toast.makeText(this, "Position : " + position, Toast.LENGTH_LONG).show();
+    protected void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume()");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v(TAG, "onPause()");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v(TAG, "onStop()");
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v(TAG, "onDestroy()");
+    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_menu);
+        MenuAdapter menuAdapter=new MenuAdapter(getApplicationContext());
+        ListView listView =this.findViewById(R.id.menulist);
+        listView.setAdapter(menuAdapter);
     }
 }

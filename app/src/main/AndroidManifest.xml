@@ -9,17 +9,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Upload">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Upload" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".Gallery" />
-        <activity android:name=".Menu" />
-        <activity android:name=".Image" />
+        <activity android:name=".Menu"
+            android:parentActivityName=".MainActivity">
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".ImageView" />
         <activity android:name=".Faq" />
         <activity android:name=".Statistique" />
         <activity android:name=".Contact" />
