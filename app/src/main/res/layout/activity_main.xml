@@ -33,7 +33,7 @@
                 android:id="@+id/add_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/faq"
+                android:layout_toStartOf="@id/gallery"
                 android:adjustViewBounds="true"
                 android:background="@drawable/buttonback"
                 android:contentDescription="@string/add_image"
@@ -45,7 +45,7 @@
                 android:src="@drawable/add_image" />
 
             <ImageButton
-                android:id="@+id/faq"
+                android:id="@+id/gallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/buttonback"
@@ -53,12 +53,12 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
-                android:layout_toStartOf="@id/contact"
+                android:layout_toStartOf="@id/more"
                 android:contentDescription="@string/faq_message"
                 android:src="@drawable/gallery" />
 
             <ImageButton
-                android:id="@+id/contact"
+                android:id="@+id/more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/buttonback"
@@ -71,4 +71,10 @@
                 android:src="@drawable/more" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar" />
 </RelativeLayout>

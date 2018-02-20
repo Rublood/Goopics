@@ -23,7 +23,7 @@
         <activity android:name=".Faq" />
         <activity android:name=".Statistique" />
         <activity android:name=".Contact" />
-        <activity android:name=".Setting"></activity>
+        <activity android:name=".Setting" />
     </application>
 
 </manifest>
