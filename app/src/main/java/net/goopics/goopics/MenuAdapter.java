@@ -56,6 +56,7 @@ public class MenuAdapter extends BaseAdapter {
         label.setText(this.menu.get(i).getName());
         android.widget.ImageView icon = layoutItem.findViewById(R.id.cell_image);
         icon.setImageResource(this.menu.get(i).getImage());
+        layoutItem.setLongClickable(true);
         return layoutItem;
     }
 }
