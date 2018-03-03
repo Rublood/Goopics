@@ -59,4 +59,5 @@ public class MenuAdapter extends BaseAdapter {
         layoutItem.setLongClickable(true);
         return layoutItem;
     }
+
 }

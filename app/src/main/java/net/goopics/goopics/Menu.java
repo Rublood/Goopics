@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -46,7 +47,12 @@ public class Menu extends Activity {
         setContentView(R.layout.activity_menu);
         menuAdapter=new MenuAdapter(getApplicationContext());
         ListView listView =this.findViewById(R.id.menulist);
+        listView.setClickable(true);
         listView.setAdapter(menuAdapter);
-
+        listView.setOnItemClickListener((adapterView, view, i, l) ->  {
+            Intent intent = new Intent(Menu.this,Faq.class);
+            startActivity(intent);
+        });
     }
+
 }

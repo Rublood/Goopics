@@ -72,9 +72,110 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-    <ListView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/toolbar" />
+        android:layout_centerVertical="true"
+        android:layout_below="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/faq">
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Qu'est-ce qu'un hébergeur d'images ?" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Un hébergeur d'images est un site web qui vous permet d'envoyer et de partager vos images très facilement. C'est le principe même de GooPics, dès votre arrivé sur le site, vous pouvez envoyer vos images et les partager grâce aux liens de partage." />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mon image n'est plus en ligne ? Pourquoi ?" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Si votre image ne respecte pas notre règlement, celle-ci peut être supprimée. Consultez le lien basique ou direct de l'image supprimée afin d'en connaître la raison." />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GooPics est-il gratuit ?" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Oui, GooPics est entièrement gratuit." />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quels sont les différents liens de partage que nous proposons ?" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lien basique : Il s'agit d'un lien de partage qui redirige vers une page de notre site, celle-ci met votre image au centre de la page afin de la rendre visible et propose également diverses informations comme la date d'envoi ou encore la possibilité de voir la totalité des liens de partage de l'image en question.
+Lien direct : Il s'agit du lien direct vers votre image, celui-ci est très utile afin de l'intégrer sur des sites ou des forum malgré les autres types de liens que nous vous proposons ci-dessous.
+Lien forum : Il s'agit d'un lien de partage destiné aux messages sur un forum, il vous suffit de copier ce bout de code et votre image est instantanément inclus dans votre message sur la grande majorité des forums.
+Markdown : Il s'agit d'un type de lien destiné aussi au forum mais aussi de plus en plus pour d'autres sites comme les blogs. C'est un système qui est en train de devenir beaucoup plus populaire que le BBCode, nous pensons que le BBCode finira par disparaître prochainement.
+Lien HTML : Il s'agit d'un bout de code HTML vous permettant d'inclure vos images directement sur votre propre système grâce au langage de description HTML (et sa balise img).
+
+Si vous avez d'autre idée de lien pour partager vos images n'hésitez pas à nous les suggérer par email." />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quelle est la durée de vie des images envoyées ?" />
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Les images n'ont pas de durées, en revanche, elles peuvent être supprimées si elles ne respectent pas le règlement." />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+        </LinearLayout>
+    </ScrollView>
+
+
 </RelativeLayout>

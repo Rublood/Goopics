@@ -12,7 +12,6 @@ public class MenuComponents {
     public String getName() {
         return aName;
     }
-
     public void setName(String aName) {
         this.aName = aName;
     }
