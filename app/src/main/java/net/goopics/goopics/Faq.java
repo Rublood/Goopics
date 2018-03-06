@@ -11,13 +11,27 @@ public class Faq extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faq);
-        TextView textView,textView2;
-        textView=findViewById(R.id.textView);
-        textView2=findViewById(R.id.textView2);
-        textView.setOnClickListener(view -> {
-            if (textView2.getVisibility()== View.INVISIBLE){
-                textView2.setVisibility(View.VISIBLE);
-            }else textView2.setVisibility(View.INVISIBLE);
+        findViewById(R.id.textView2).setVisibility(View.GONE);
+        findViewById(R.id.textView4).setVisibility(View.GONE);
+        findViewById(R.id.textView6).setVisibility(View.GONE);
+        findViewById(R.id.textView8).setVisibility(View.GONE);
+        findViewById(R.id.textView10).setVisibility(View.GONE);
+        findViewById(R.id.textView12).setVisibility(View.GONE);
+        findViewById(R.id.textView14).setVisibility(View.GONE);
+        clickable(findViewById(R.id.textView),findViewById(R.id.textView2));
+        clickable(findViewById(R.id.textView3),findViewById(R.id.textView4));
+        clickable(findViewById(R.id.textView5),findViewById(R.id.textView6));
+        clickable(findViewById(R.id.textView7),findViewById(R.id.textView8));
+        clickable(findViewById(R.id.textView9),findViewById(R.id.textView10));
+        clickable(findViewById(R.id.textView11),findViewById(R.id.textView12));
+        clickable(findViewById(R.id.textView13),findViewById(R.id.textView14));
+        //clickable(findViewById(R.id.textView15),findViewById(R.id.textView2));
+    }
+    public void clickable(TextView t1,TextView t2){
+        t1.setOnClickListener(view -> {
+            if (t2.getVisibility()== View.GONE){
+                t2.setVisibility(View.VISIBLE);
+            }else t2.setVisibility(View.GONE);
         });
     }
 }
