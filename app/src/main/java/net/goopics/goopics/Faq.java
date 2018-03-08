@@ -1,8 +1,10 @@
 package net.goopics.goopics;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class Faq extends AppCompatActivity {
@@ -11,6 +13,21 @@ public class Faq extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faq);
+        ImageButton menu = findViewById(R.id.more);
+        ImageButton upload = findViewById(R.id.add_image);
+        ImageButton gallery = findViewById(R.id.gallery);
+        menu.setOnClickListener(v -> {
+            Intent intent = new Intent(Faq.this, Menu.class);
+            Faq.this.startActivity(intent);
+        });
+        upload.setOnClickListener(v -> {
+            Intent intent = new Intent(Faq.this, Upload.class);
+            Faq.this.startActivity(intent);
+        });
+        gallery.setOnClickListener(v -> {
+            Intent intent = new Intent(Faq.this, Gallery.class);
+            Faq.this.startActivity(intent);
+        });
         findViewById(R.id.textView2).setVisibility(View.GONE);
         findViewById(R.id.textView4).setVisibility(View.GONE);
         findViewById(R.id.textView6).setVisibility(View.GONE);

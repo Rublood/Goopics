@@ -2,6 +2,8 @@ package net.goopics.goopics;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,22 +11,28 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.rximagepicker.RxImagePicker;
+import com.loopj.android.http.*;
+import cz.msebera.android.httpclient.Header;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
 import rx.functions.Action1;
 
-public class Upload extends AppCompatActivity {
+public class Upload extends AppCompatActivity{
     private static String TAG = MainActivity.class.getSimpleName();
     private static final int RC_CAMERA = 3000;
     private TextView textView;
+    ProgressBar barre;
+    android.widget.ImageView imagepick;
     private ArrayList<com.esafirm.imagepicker.model.Image> images = new ArrayList<>();
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -55,10 +63,19 @@ public class Upload extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
-        ImageButton menu = findViewById(R.id.more);
+        barre = findViewById(R.id.barre);
+        imagepick = findViewById(R.id.imagepick);
+        barre.setVisibility(View.GONE);
+        imagepick.setVisibility(View.GONE);
         textView = findViewById(R.id.image_path);
+        ImageButton menu = findViewById(R.id.more);
+        ImageButton gallery = findViewById(R.id.gallery);
         menu.setOnClickListener(v -> {
             Intent intent = new Intent(Upload.this, Menu.class);
+            Upload.this.startActivity(intent);
+        });
+        gallery.setOnClickListener(v -> {
+            Intent intent = new Intent(Upload.this, Gallery.class);
             Upload.this.startActivity(intent);
         });
         findViewById(R.id.button_pick_image_rx).setOnClickListener(view -> getImagePickerObservable().forEach(action));
@@ -98,8 +115,51 @@ public class Upload extends AppCompatActivity {
 
         StringBuilder stringBuffer = new StringBuilder();
         for (int i = 0, l = images.size(); i < l; i++) {
-            stringBuffer.append(images.get(i).getPath()).append("\n");
+            stringBuffer.append(images.get(i).getPath());
         }
-        textView.setText(stringBuffer.toString());
+        try {
+            Bitmap bm = BitmapFactory.decodeFile(stringBuffer.toString());
+            imagepick.setImageBitmap(bm);
+            imagepick.setVisibility(View.VISIBLE);
+            barre.setVisibility(View.VISIBLE);
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.setTimeout(60);
+            RequestParams params = new RequestParams();
+            params.put("image", "image");
+            params.put("image", new File(stringBuffer.toString()));
+            client.post("https://goopics.net/api/", params, new TextHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    // error handling
+                    Log.v("Tag", "onFailure");
+                    barre.setVisibility(View.GONE);
+                    toastdisp("erreur");
+
+                }
+
+                @Override
+                public void onProgress(long bytesWritten, long totalSize) {
+                    super.onProgress(bytesWritten, totalSize);
+                    barre.setProgress(50);
+                    Log.v("Tag","progbar : "+((int)(bytesWritten * 1.0 / totalSize) * 10)*10);
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    // success
+                    Log.v("Tag", "onSuccess, responseString: " + responseString);
+                    barre.setVisibility(View.GONE);
+                    imagepick.setVisibility(View.GONE);
+                    toastdisp("image envoyer");
+                }
+            });
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    public void toastdisp(String mess) {
+        Toast.makeText(this,mess,
+                Toast.LENGTH_SHORT).show();
     }
 }

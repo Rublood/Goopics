@@ -83,18 +83,40 @@
             android:orientation="vertical">
 
             <TextView
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
                 android:id="@+id/image_path"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="aucune image choisie" />
 
+            <ImageView
+                android:id="@+id/imagepick"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/barre"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_pick_image_rx"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
     <Button
         android:id="@+id/button_pick_image_rx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="choisie une image"
+        android:background="@drawable/buttonbacksquare"
+        android:layout_marginBottom="15dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>
