@@ -1,15 +1,19 @@
 package net.goopics.goopics;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.media.Image;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,43 +21,58 @@ import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.rximagepicker.RxImagePicker;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.loopj.android.http.*;
+
 import cz.msebera.android.httpclient.Header;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
 import rx.functions.Action1;
 
-public class Upload extends AppCompatActivity{
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
+public class Upload extends AppCompatActivity {
     private boolean state;
+    private FusedLocationProviderClient mFusedLocationClient;
     private static String TAG = MainActivity.class.getSimpleName();
     private static final int RC_CAMERA = 3000;
     private TextView textView;
     ProgressBar barre;
+    Button button;
     android.widget.ImageView imagepick;
     private ArrayList<com.esafirm.imagepicker.model.Image> images = new ArrayList<>();
+
     @Override
     protected void onStart() {
         super.onStart();
         Log.v(TAG, "onStart()");
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         Log.v(TAG, "onResume()");
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.v(TAG, "onPause()");
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.v(TAG, "onStop()");
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -63,15 +82,17 @@ public class Upload extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        state=false;
+        state = false;
         setContentView(R.layout.activity_upload);
         barre = findViewById(R.id.barre);
+        button = findViewById(R.id.button_pick_image_rx);
         imagepick = findViewById(R.id.imagepick);
         barre.setVisibility(View.GONE);
         imagepick.setVisibility(View.GONE);
         textView = findViewById(R.id.image_path);
         ImageButton menu = findViewById(R.id.more);
         ImageButton gallery = findViewById(R.id.gallery);
+        mFusedLocationClient = getFusedLocationProviderClient(this);
         menu.setOnClickListener(v -> {
             Intent intent = new Intent(Upload.this, Menu.class);
             Upload.this.startActivity(intent);
@@ -80,12 +101,15 @@ public class Upload extends AppCompatActivity{
             Intent intent = new Intent(Upload.this, Gallery.class);
             Upload.this.startActivity(intent);
         });
-        findViewById(R.id.button_pick_image_rx).setOnClickListener(view ->{if(!state)getImagePickerObservable().forEach(action);});
+        findViewById(R.id.button_pick_image_rx).setOnClickListener(view -> {
+            if (!state) getImagePickerObservable().forEach(action);
+        });
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RC_CAMERA) {
-            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 captureImage();
             }
         }
@@ -99,10 +123,11 @@ public class Upload extends AppCompatActivity{
     Action1<List<com.esafirm.imagepicker.model.Image>> action = this::printImages;
 
     private rx.Observable<List<com.esafirm.imagepicker.model.Image>> getImagePickerObservable() {
-        state=true;
+        state = true;
         return RxImagePicker.getInstance()
                 .start(this, ImagePicker.create(this).limit(1));
     }
+
     @Override
     protected void onActivityResult(int requestCode, final int resultCode, Intent data) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
@@ -130,11 +155,14 @@ public class Upload extends AppCompatActivity{
             RequestParams params = new RequestParams();
             params.put("image", "image");
             params.put("image", new File(stringBuffer.toString()));
+            textView.setVisibility(View.GONE);
+            button.setVisibility(View.GONE);
+            toastdisp("Envoi en cours");
             client.post("https://goopics.net/api/", params, new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     // error handling
-                    state=false;
+                    state = false;
                     Log.v("Tag", "onFailure");
                     barre.setVisibility(View.GONE);
                     toastdisp("erreur");
@@ -151,11 +179,14 @@ public class Upload extends AppCompatActivity{
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
                     // success
-                    state=false;
+                    state = false;
                     Log.v("Tag", "onSuccess, responseString: " + responseString);
                     barre.setVisibility(View.GONE);
                     imagepick.setVisibility(View.GONE);
                     toastdisp("image envoyer");
+                    Intent intent = new Intent(Upload.this, net.goopics.goopics.Image.class);
+                    intent.putExtra("link", responseString);
+                    Upload.this.startActivity(intent);
                 }
             });
 
@@ -163,8 +194,31 @@ public class Upload extends AppCompatActivity{
             e.printStackTrace();
         }
     }
+
     public void toastdisp(String mess) {
-        Toast.makeText(this,mess,
+        Toast.makeText(this, mess,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    public void getLastLocation() {
+        // Get last known recent location using new Google Play Services SDK (v11+)
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // GPS location can be null if GPS is switched off
+                        if (location != null) {
+
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
     }
 }
