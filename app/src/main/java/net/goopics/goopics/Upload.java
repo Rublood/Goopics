@@ -27,6 +27,7 @@ import java.util.List;
 import rx.functions.Action1;
 
 public class Upload extends AppCompatActivity{
+    private boolean state;
     private static String TAG = MainActivity.class.getSimpleName();
     private static final int RC_CAMERA = 3000;
     private TextView textView;
@@ -62,6 +63,7 @@ public class Upload extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        state=false;
         setContentView(R.layout.activity_upload);
         barre = findViewById(R.id.barre);
         imagepick = findViewById(R.id.imagepick);
@@ -78,12 +80,12 @@ public class Upload extends AppCompatActivity{
             Intent intent = new Intent(Upload.this, Gallery.class);
             Upload.this.startActivity(intent);
         });
-        findViewById(R.id.button_pick_image_rx).setOnClickListener(view -> getImagePickerObservable().forEach(action));
+        findViewById(R.id.button_pick_image_rx).setOnClickListener(view ->{if(!state)getImagePickerObservable().forEach(action);});
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RC_CAMERA) {
-            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
                 captureImage();
             }
         }
@@ -97,6 +99,7 @@ public class Upload extends AppCompatActivity{
     Action1<List<com.esafirm.imagepicker.model.Image>> action = this::printImages;
 
     private rx.Observable<List<com.esafirm.imagepicker.model.Image>> getImagePickerObservable() {
+        state=true;
         return RxImagePicker.getInstance()
                 .start(this, ImagePicker.create(this).limit(1));
     }
@@ -121,7 +124,7 @@ public class Upload extends AppCompatActivity{
             Bitmap bm = BitmapFactory.decodeFile(stringBuffer.toString());
             imagepick.setImageBitmap(bm);
             imagepick.setVisibility(View.VISIBLE);
-            barre.setVisibility(View.VISIBLE);
+            //barre.setVisibility(View.VISIBLE);
             AsyncHttpClient client = new AsyncHttpClient();
             client.setTimeout(60);
             RequestParams params = new RequestParams();
@@ -131,6 +134,7 @@ public class Upload extends AppCompatActivity{
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     // error handling
+                    state=false;
                     Log.v("Tag", "onFailure");
                     barre.setVisibility(View.GONE);
                     toastdisp("erreur");
@@ -140,13 +144,14 @@ public class Upload extends AppCompatActivity{
                 @Override
                 public void onProgress(long bytesWritten, long totalSize) {
                     super.onProgress(bytesWritten, totalSize);
-                    barre.setProgress(50);
-                    Log.v("Tag","progbar : "+((int)(bytesWritten * 1.0 / totalSize) * 10)*10);
+                    /*barre.setProgress(50);
+                    Log.v("Tag","progbar : "+((int)(bytesWritten * 1.0 / totalSize) * 10)*10);*/
                 }
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
                     // success
+                    state=false;
                     Log.v("Tag", "onSuccess, responseString: " + responseString);
                     barre.setVisibility(View.GONE);
                     imagepick.setVisibility(View.GONE);
