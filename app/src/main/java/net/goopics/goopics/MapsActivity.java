@@ -1,18 +1,22 @@
 package net.goopics.goopics;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    String link;
+    Double lat;
+    Double longi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle!=null){
+            link=(String)bundle.get("link");
+            lat=(double)bundle.get("lat");
+            longi=(double)bundle.get("longi");
+        }
+        else{
+            lat=null;
+            longi=null;
+        }
     }
 
 
@@ -39,8 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng marker = new LatLng(lat,longi);
+        mMap.addMarker(new MarkerOptions().position(marker).title("photo envoyé d'ici").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet(link));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(marker));
     }
 }

@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.media.Image;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.test.mock.MockPackageManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,26 +20,22 @@ import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.rximagepicker.RxImagePicker;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.loopj.android.http.*;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
-import cz.msebera.android.httpclient.Header;
+import org.ankit.gpslibrary.MyTracker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import rx.functions.Action1;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class Upload extends AppCompatActivity {
     private boolean state;
-    private FusedLocationProviderClient mFusedLocationClient;
     private static String TAG = MainActivity.class.getSimpleName();
     private static final int RC_CAMERA = 3000;
     private TextView textView;
@@ -48,6 +43,9 @@ public class Upload extends AppCompatActivity {
     Button button;
     android.widget.ImageView imagepick;
     private ArrayList<com.esafirm.imagepicker.model.Image> images = new ArrayList<>();
+    private static final int REQUEST_CODE_PERMISSION = 2;
+    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+    SQLiteDataBaseHelper db;
 
     @Override
     protected void onStart() {
@@ -57,12 +55,14 @@ public class Upload extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        //location.beginUpdates();
         super.onResume();
         Log.v(TAG, "onResume()");
     }
 
     @Override
     protected void onPause() {
+        //location.endUpdates();
         super.onPause();
         Log.v(TAG, "onPause()");
     }
@@ -85,6 +85,7 @@ public class Upload extends AppCompatActivity {
         state = false;
         setContentView(R.layout.activity_upload);
         barre = findViewById(R.id.barre);
+        db = new SQLiteDataBaseHelper(this);
         button = findViewById(R.id.button_pick_image_rx);
         imagepick = findViewById(R.id.imagepick);
         barre.setVisibility(View.GONE);
@@ -92,7 +93,10 @@ public class Upload extends AppCompatActivity {
         textView = findViewById(R.id.image_path);
         ImageButton menu = findViewById(R.id.more);
         ImageButton gallery = findViewById(R.id.gallery);
-        mFusedLocationClient = getFusedLocationProviderClient(this);
+       /* if (!location.hasLocationEnabled()) {
+            // ask the user to enable location access
+            SimpleLocation.openSettings(this);
+        }toastdisp(""+location.getLatitude()+location.getLongitude());*/
         menu.setOnClickListener(v -> {
             Intent intent = new Intent(Upload.this, Menu.class);
             Upload.this.startActivity(intent);
@@ -102,14 +106,48 @@ public class Upload extends AppCompatActivity {
             Upload.this.startActivity(intent);
         });
         findViewById(R.id.button_pick_image_rx).setOnClickListener(view -> {
-            if (!state) getImagePickerObservable().forEach(action);
+            /*if (!state) {
+                final double latitude = location.getLatitude();
+                final double longitude = location.getLongitude();
+
+                Toast.makeText(this, "Latitude: "+latitude, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Longitude: "+longitude, Toast.LENGTH_SHORT).show();*/
+                getImagePickerObservable().forEach(action);
+
         });
+
+
+
+
+
+
+
+
+        try {
+            if (ActivityCompat.checkSelfPermission(this, mPermission)
+                    != MockPackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this, new String[]{mPermission, Manifest.permission.READ_PHONE_STATE},
+                        REQUEST_CODE_PERMISSION);
+            }else{
+                //read location
+                getLocation();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    void getLocation(){
+        MyTracker tracker=new MyTracker(this);
+        toastdisp(""+tracker.getLatitude());
+        toastdisp(""+tracker.getLongitude());
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RC_CAMERA) {
             if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation();
                 captureImage();
             }
         }
@@ -150,6 +188,10 @@ public class Upload extends AppCompatActivity {
             imagepick.setImageBitmap(bm);
             imagepick.setVisibility(View.VISIBLE);
             //barre.setVisibility(View.VISIBLE);
+
+
+
+
             AsyncHttpClient client = new AsyncHttpClient();
             client.setTimeout(60);
             RequestParams params = new RequestParams();
@@ -184,8 +226,12 @@ public class Upload extends AppCompatActivity {
                     barre.setVisibility(View.GONE);
                     imagepick.setVisibility(View.GONE);
                     toastdisp("image envoyer");
+                    MyTracker tracker=new MyTracker(Upload.this);
                     Intent intent = new Intent(Upload.this, net.goopics.goopics.Image.class);
                     intent.putExtra("link", responseString);
+                    intent.putExtra("lat",tracker.getLatitude());
+                    intent.putExtra("longi",tracker.getLongitude());
+                    db.insertdata(responseString,tracker.getLatitude(),tracker.getLongitude());
                     Upload.this.startActivity(intent);
                 }
             });
@@ -198,27 +244,5 @@ public class Upload extends AppCompatActivity {
     public void toastdisp(String mess) {
         Toast.makeText(this, mess,
                 Toast.LENGTH_SHORT).show();
-    }
-
-    public void getLastLocation() {
-        // Get last known recent location using new Google Play Services SDK (v11+)
-        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
-        locationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // GPS location can be null if GPS is switched off
-                        if (location != null) {
-
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
-                });
     }
 }
